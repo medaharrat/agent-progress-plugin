@@ -1,0 +1,23 @@
+name: "Copilot Setup Steps"
+
+# This workflow is invoked by the Copilot coding agent before it starts
+# working, to prepare the environment. The job must be named
+# `copilot-setup-steps`. `workflow_dispatch` also lets you run/test it
+# manually from the Actions tab.
+on: workflow_dispatch
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm install
