@@ -1,0 +1,49 @@
+{
+  "name": "claude-progress",
+  "version": "1.1.0",
+  "description": "Semantic weighted progress tracking for Claude Code sessions",
+  "license": "MIT",
+  "type": "module",
+  "author": "Mohamed Aharrat",
+  "homepage": "https://github.com/medaharrat/agent-progress-plugin#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/medaharrat/agent-progress-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/medaharrat/agent-progress-plugin/issues"
+  },
+  "keywords": [
+    "claude-code",
+    "claude",
+    "progress",
+    "status-line",
+    "hooks",
+    "cli"
+  ],
+  "bin": { "claude-progress": "dist/src/cli.js" },
+  "files": [
+    "dist",
+    "skill"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "lint": "eslint .",
+    "format": "prettier --check .",
+    "init": "npm run build && node dist/src/cli.js init",
+    "dev-install": "npm run build && node dist/src/cli.js dev-install",
+    "uninstall:project": "npm run build && node dist/src/cli.js uninstall",
+    "sample": "npm run build && node dist/src/cli.js sample",
+    "smoke-test": "npm run build && bash scripts/smoke-test.sh"
+  },
+  "engines": { "node": ">=18" },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^22.10.0",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1"
+  }
+}
