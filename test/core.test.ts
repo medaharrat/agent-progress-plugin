@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { calculateProgress, clearFailure, completeTaskStep, isStaleEvent, parseTestStats, recordFailure, startTurn, upsertTaskStep } from "../src/core.js";
+import { calculateProgress, clearFailure, clearNotificationBlockers, completeTaskStep, isStaleEvent, parseTestStats, recordFailure, startTurn, upsertTaskStep } from "../src/core.js";
 import { freshState } from "../src/state.js";
 
 test("weighted progress includes active fraction", () => {
@@ -116,4 +116,15 @@ test("stale events cannot mutate a newer turn", () => {
   assert.equal(isStaleEvent(s, "turn-1"), true);
   assert.equal(isStaleEvent(s, "turn-2"), false);
   assert.equal(isStaleEvent(s, undefined), false);
+});
+
+test("notification blockers clear once activity resumes, without touching failure blockers", () => {
+  let s = startTurn("s", "Build the export feature", "turn-1");
+  s.blockers = [
+    { id: "notification:permission_prompt", message: "Claude needs your permission", source: "automatic", active: true, count: 1, firstSeen: "t", lastSeen: "t" },
+    { id: "failure:abc", message: "Repeated failure", source: "automatic", active: true, count: 3, firstSeen: "t", lastSeen: "t" }
+  ];
+  s = clearNotificationBlockers(s);
+  assert.equal(s.blockers.find(b => b.id === "notification:permission_prompt")?.active, false);
+  assert.equal(s.blockers.find(b => b.id === "failure:abc")?.active, true);
 });

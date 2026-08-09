@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { createHash } from "node:crypto";
 import { loadState, saveState } from "./state.js";
-import { clearFailure, completeTaskStep, isStaleEvent, parseTestStats, recordFailure, startTurn, upsertTaskStep } from "./core.js";
+import { clearFailure, clearNotificationBlockers, completeTaskStep, isStaleEvent, parseTestStats, recordFailure, startTurn, upsertTaskStep } from "./core.js";
 import type { HookInput, ProgressState } from "./types.js";
 
 const readStdin = async () => { let s = ""; for await (const c of process.stdin) s += c; return s; };
@@ -26,6 +26,8 @@ export async function handleHook(input: HookInput): Promise<HookResult> {
   }
 
   if (isStaleEvent(state, eventTurnId)) return { state };
+
+  state = clearNotificationBlockers(state);
 
   if (event === "TaskCreated") {
     if (input.task_id) state = upsertTaskStep(state, input.task_id, input.task_subject ?? "", input.task_description);

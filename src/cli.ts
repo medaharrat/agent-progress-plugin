@@ -52,7 +52,7 @@ export async function init(project: string, opts: { symlink?: boolean } = {}) {
   }
   const previousStatusLine = current.statusLine ?? null;
   current.hooks = hooks;
-  current.statusLine = { type: "command", command: `node "${path.join(installDir, "dist", "statusline.js")}"`, refreshInterval: 1000 };
+  current.statusLine = { type: "command", command: `node "${path.join(installDir, "dist", "statusline.js")}"`, refreshInterval: 1 };
   await writeFile(settingsPath, `${JSON.stringify(current, null, 2)}\n`);
   await writeFile(manifestPath, `${JSON.stringify({ marker, settingsPath, backup, previousStatusLine, symlinked: !!opts.symlink }, null, 2)}\n`);
   console.log(`Installed Claude Progress in ${project}${opts.symlink ? " (symlinked dev build)" : ""}`);

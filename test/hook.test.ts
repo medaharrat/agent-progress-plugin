@@ -39,6 +39,16 @@ test("TaskCreated and TaskCompleted hooks drive the plan for the active turn", (
   assert.equal(afterComplete.steps.find(s => s.id === "t2")?.status, "active");
 }));
 
+test("a permission-prompt blocker clears as soon as work resumes, even without a matching PostToolUse", () => withTempProject(async cwd => {
+  const session = "s4";
+  await handleHook({ hook_event_name: "UserPromptSubmit", cwd, session_id: session, prompt_id: "turn-1", prompt: "Refactor the payments module" });
+  const { state: afterNotification } = await handleHook({ hook_event_name: "Notification", cwd, session_id: session, prompt_id: "turn-1", notification_type: "permission_prompt", message: "Claude needs your permission" });
+  assert.equal(afterNotification.blockers.find(b => b.id === "notification:permission_prompt")?.active, true);
+
+  const { state: afterResume } = await handleHook({ hook_event_name: "PostToolUse", cwd, session_id: session, prompt_id: "turn-1", tool_name: "Read", tool_input: { file_path: "a.ts" } });
+  assert.equal(afterResume.blockers.find(b => b.id === "notification:permission_prompt")?.active, false);
+}));
+
 test("stale events from a previous turn cannot mutate the newer turn", () => withTempProject(async cwd => {
   const session = "s3";
   await handleHook({ hook_event_name: "UserPromptSubmit", cwd, session_id: session, prompt_id: "turn-1", prompt: "First task" });

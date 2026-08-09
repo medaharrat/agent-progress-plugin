@@ -109,6 +109,12 @@ export function clearFailure(state: ProgressState, signature: string): ProgressS
   return { ...state, failureSignatures: failures, blockers: state.blockers.map(b => b.id === `failure:${signature}` ? { ...b, active: false } : b), updatedAt: new Date().toISOString() };
 }
 
+/** Clears notification-sourced blockers (permission prompts, agent-needs-input); any later hook event proves Claude resumed. */
+export function clearNotificationBlockers(state: ProgressState): ProgressState {
+  if (!state.blockers.some(b => b.id.startsWith("notification:") && b.active)) return state;
+  return { ...state, blockers: state.blockers.map(b => b.id.startsWith("notification:") ? { ...b, active: false } : b) };
+}
+
 export function parseTestStats(text: string): TestStats | null {
   const patterns = [
     /(?:tests?\s*)?(\d+)\s+passed(?:[^\d]+(\d+)\s+failed)?(?:[^\d]+(\d+)\s+skipped)?/i,
