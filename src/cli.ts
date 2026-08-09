@@ -91,7 +91,7 @@ async function main() {
   if (command === "init") await init(parseProject());
   else if (command === "dev-install") await init(parseProject(), { symlink: true });
   else if (command === "uninstall") await uninstall(parseProject());
-  else if (command === "sample") console.log(renderStatus(sample, 100, false));
+  else if (command === "sample") console.log(renderStatus(sample, 100, process.env.NO_COLOR === undefined));
   else { console.log("Usage: claude-progress <init|dev-install|uninstall|sample> [--project PATH]"); process.exitCode = command === "help" ? 0 : 1; }
 }
 
