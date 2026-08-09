@@ -3,6 +3,7 @@ import { cp, mkdir, readFile, rm, stat, symlink, writeFile } from "node:fs/promi
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { renderStatus } from "./render.js";
+import { isMainModule } from "./main-module.js";
 import type { ProgressState } from "./types.js";
 
 type Json = Record<string, unknown>;
@@ -95,4 +96,4 @@ async function main() {
   else { console.log("Usage: claude-progress <init|dev-install|uninstall|sample> [--project PATH]"); process.exitCode = command === "help" ? 0 : 1; }
 }
 
-if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/\\/g, "/"))) await main();
+if (isMainModule(import.meta.url)) await main();

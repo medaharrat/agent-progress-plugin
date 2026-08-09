@@ -2,6 +2,7 @@
 import { createHash } from "node:crypto";
 import { loadState, saveState } from "./state.js";
 import { clearFailure, clearNotificationBlockers, completeTaskStep, isStaleEvent, parseTestStats, recordFailure, startTurn, upsertTaskStep } from "./core.js";
+import { isMainModule } from "./main-module.js";
 import type { HookInput, ProgressState } from "./types.js";
 
 const readStdin = async () => { let s = ""; for await (const c of process.stdin) s += c; return s; };
@@ -60,7 +61,7 @@ export async function handleHook(input: HookInput): Promise<HookResult> {
   return { state };
 }
 
-if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/\\/g, "/"))) {
+if (isMainModule(import.meta.url)) {
   try {
     const { hookOutput } = await handleHook(JSON.parse(await readStdin() || "{}"));
     if (hookOutput) console.log(JSON.stringify(hookOutput));
